@@ -2213,12 +2213,15 @@
 				}
 
 				//FIXME for Prott, textのascentがずれる問題に対する一時対応
-				if(ctx.font.toLowerCase().indexOf('hiragino') < 0) {
+				var userAgent = window.navigator.userAgent.toLowerCase();
+				var isChromeOrFF = userAgent.indexOf('chrome') !== -1 || userAgent.indexOf('firefox') !== -1;
+				if(isChromeOrFF && ctx.font.toLowerCase().indexOf('hiragino') < 0) {
 					ctx.textBaseline = 'hanging';
 					var fontSize = this.parent.style('font-size').numValueOrDefault(svg.Font.Parse(svg.ctx.font).fontSize);
 					var ratio = ctx.font.toLowerCase().indexOf('times new roman') >= 0 ? 5.6
 						: ctx.font.toLowerCase().indexOf('open sans') >= 0 ? 4.6
-						: 5;
+						: ctx.font.toLowerCase().indexOf('sans') >= 0 ? 5
+						: 5.3;
 					this.y += fontSize / ratio;
 				}
 
