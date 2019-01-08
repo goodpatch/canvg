@@ -2212,11 +2212,14 @@
 					return;
 				}
 
-				// for Prott, fix the y position issue
+				//FIXME for Prott, textのascentがずれる問題に対する一時対応
 				if(ctx.font.toLowerCase().indexOf('hiragino') < 0) {
-					ctx.textBaseline = 'alphabetic';
-					var fontSize = parseInt(ctx.font.replace(/[^0-9]/ig,""));
-					this.y += fontSize;
+					ctx.textBaseline = 'hanging';
+					var fontSize = this.parent.style('font-size').numValueOrDefault(svg.Font.Parse(svg.ctx.font).fontSize);
+					var ratio = ctx.font.toLowerCase().indexOf('times new roman') >= 0 ? 5.6
+						: ctx.font.toLowerCase().indexOf('open sans') >= 0 ? 4.6
+						: 5;
+					this.y += fontSize / ratio;
 				}
 
 				if (ctx.fillStyle != '') ctx.fillText(svg.compressSpaces(this.getText()), this.x, this.y);
