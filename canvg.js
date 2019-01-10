@@ -2212,13 +2212,17 @@
 					return;
 				}
 
-				// for Prott, fix the y position issue in Firefox
-				if(navigator.userAgent.toLowerCase().indexOf('firefox') > -1) {
-					var fontSize = ctx.font.replace(/[^0-9]/ig,"");
-					// calculate delta = 10.1354 * log(0.0936537 * x)
-					// https://www.wolframalpha.com/input/?i=logarithmic+fit+%7B%7B17%2C+5.5%7D%2C+%7B24%2C+8%7D%2C%7B48%2C+13%7D%2C%7B72%2C+21%7D%7D
-					var delta = 10.1354 * Math.log(fontSize * 0.0936537)
-					this.y = this.y + delta;
+				//FIXME for Prott, textのascentがずれる問題に対する一時対応
+				var userAgent = window.navigator.userAgent.toLowerCase();
+				var isChromeOrFF = userAgent.indexOf('chrome') !== -1 || userAgent.indexOf('firefox') !== -1;
+				if(isChromeOrFF && ctx.font.toLowerCase().indexOf('hiragino') < 0) {
+					ctx.textBaseline = 'hanging';
+					var fontSize = this.parent.style('font-size').numValueOrDefault(svg.Font.Parse(svg.ctx.font).fontSize);
+					var ratio = ctx.font.toLowerCase().indexOf('times new roman') >= 0 ? 5.6
+						: ctx.font.toLowerCase().indexOf('open sans') >= 0 ? 4.6
+						: ctx.font.toLowerCase().indexOf('sans') >= 0 ? 5
+						: 5.3;
+					this.y += fontSize / ratio;
 				}
 
 				if (ctx.fillStyle != '') ctx.fillText(svg.compressSpaces(this.getText()), this.x, this.y);
